@@ -348,13 +348,18 @@
     incRay1.setAttribute("x1", light1.x); incRay1.setAttribute("y1", light1.y);
     incRay1.setAttribute("x2", P1.x); incRay1.setAttribute("y2", P1.y);
 
+    // The refracted ray (and the "if it didn't bend" reference line) continue in the
+    // same direction the light was already travelling — i.e. the opposite lateral side
+    // from where the light source sits relative to P — just bent toward the normal.
+    var refSign = -sign;
+
     var REF_LEN = 170;
-    var rx = P1.x + REF_LEN * Math.sin(toRad(a2)) * sign;
+    var rx = P1.x + REF_LEN * Math.sin(toRad(a2)) * refSign;
     var ry = P1.y + REF_LEN * Math.cos(toRad(a2));
     refRay1.setAttribute("x1", P1.x); refRay1.setAttribute("y1", P1.y);
     refRay1.setAttribute("x2", rx); refRay1.setAttribute("y2", ry);
 
-    var sx = P1.x + REF_LEN * Math.sin(toRad(a1)) * sign;
+    var sx = P1.x + REF_LEN * Math.sin(toRad(a1)) * refSign;
     var sy = P1.y + REF_LEN * Math.cos(toRad(a1));
     straightRay1.setAttribute("x1", P1.x); straightRay1.setAttribute("y1", P1.y);
     straightRay1.setAttribute("x2", sx); straightRay1.setAttribute("y2", sy);
@@ -362,7 +367,6 @@
     // angle arcs
     var R1 = 50, R2 = 40;
     function arcD(cx, cy, r, aDeg, sign, downward) {
-      var a0 = downward ? 0 : 0;
       var startX = cx, startY = downward ? cy - r : cy + r;
       var endX = cx + r * Math.sin(toRad(aDeg)) * sign;
       var endY = downward ? cy - r * Math.cos(toRad(aDeg)) : cy + r * Math.cos(toRad(aDeg));
@@ -371,7 +375,7 @@
       return "M " + startX + " " + startY + " A " + r + " " + r + " 0 " + largeArc + " " + sweep + " " + endX + " " + endY;
     }
     incArc1.setAttribute("d", arcD(P1.x, P1.y, R1, a1, sign, true));
-    refArc1.setAttribute("d", arcD(P1.x, P1.y, R2, a2, sign, false));
+    refArc1.setAttribute("d", arcD(P1.x, P1.y, R2, a2, refSign, false));
 
     var labelAngInc = a1 / 2;
     incArcLabel1.setAttribute("x", P1.x + (R1 + 18) * Math.sin(toRad(labelAngInc)) * sign);
@@ -379,7 +383,7 @@
     incArcLabel1.textContent = Math.round(a1) + "°";
 
     var labelAngRef = a2 / 2;
-    refArcLabel1.setAttribute("x", P1.x + (R2 + 20) * Math.sin(toRad(labelAngRef)) * sign);
+    refArcLabel1.setAttribute("x", P1.x + (R2 + 20) * Math.sin(toRad(labelAngRef)) * refSign);
     refArcLabel1.setAttribute("y", P1.y + (R2 + 20) * Math.cos(toRad(labelAngRef)) + 4);
     refArcLabel1.textContent = Math.round(a2) + "°";
 
